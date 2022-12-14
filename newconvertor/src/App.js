@@ -1,28 +1,32 @@
-import React from 'react';
-import { Block } from './Block';
+import React, {useEffect, useState} from 'react';
+import CurrencyRow from './CurrencyRow';
 import './index.scss';
 
-function App() {
-  const [rates, setRates] = React.useState({});
+const BASE_URL = 'https://open.er-api.com/v6/latest/USD'
 
-  React.useEffect(() => {
-    fetch('https://www.cbr-xml-daily.ru/daily_json.js')
-    .then((res) => res.json())
-    .then((json) => {
-      setRates(json.rates);
-      console.log(json.rates);
-    })
-    .catch((err) => {
-      console.warn(err);
-      alert('Не удалось получить иформацию');
-    });
-  }, []);
+function App() {
+  const [currencyOptions, setCurrencyOptions] = useState([])
+  console.log(currencyOptions)
+
+  useEffect(() => {
+    fetch(BASE_URL)
+      .then(res => res.json())
+      .then(data => {
+        setCurrencyOptions([data.base, ...Object.keys(data.rates)])
+      })
+  }, [])
   return (
-    <div className="App">
-      <Block value={0} currency="RUB" onChangeCurrency={(cur) => console.log(cur)} />
-      <Block value={0} currency="USD" />
-    </div>
-  );
-}
+    <>
+      <h1>Convert</h1>
+      <CurrencyRow 
+        currencyOptions={currencyOptions}
+      />
+      <div className='equals'>=</div>
+      <CurrencyRow 
+        currencyOptions={currencyOptions}
+      />
+    </>
+   );
+  }
 
 export default App;
