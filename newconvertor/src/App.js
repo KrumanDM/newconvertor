@@ -3,6 +3,20 @@ import { Block } from './Block';
 import './index.scss';
 
 function App() {
+  const [rates, setRates] = React.useState({});
+
+  React.useEffect(() => {
+    fetch('https://www.cbr-xml-daily.ru/daily_json.js')
+    .then((res) => res.json())
+    .then((json) => {
+      setRates(json.rates);
+      console.log(json.rates);
+    })
+    .catch((err) => {
+      console.warn(err);
+      alert('Не удалось получить иформацию');
+    });
+  }, []);
   return (
     <div className="App">
       <Block value={0} currency="RUB" onChangeCurrency={(cur) => console.log(cur)} />
